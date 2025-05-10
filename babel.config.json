@@ -1,0 +1,7 @@
+{
+  "presets": [
+    "@babel/preset-env", // Трансформация современных возможностей JS
+    "@babel/preset-typescript" // Поддержка TypeScript
+  ],
+  "plugins": []
+}
