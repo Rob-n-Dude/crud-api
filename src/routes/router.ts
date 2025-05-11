@@ -1,7 +1,17 @@
 import {KnownRoute, Method} from '../constants/router'
 import {IncomingMessage, ServerResponse} from 'node:http'
 
-type RouteHandler = (req: IncomingMessage, res: ServerResponse) => Promise<void>
+type RouteHandler = (
+  req: IncomingMessage, 
+  res: ServerResponse,  
+  params?: Record<string, unknown>,
+) => Promise<void>
+
+interface Route {
+  method: Method,
+  pattern: RegExp,
+  handler: RouteHandler,
+}
 
 export interface IRouter {
   addRoute: (url: KnownRoute, method: Method, handler: RouteHandler) => void
@@ -9,15 +19,37 @@ export interface IRouter {
 }
 
 class Router implements IRouter {
-  private routes = new Map<string, RouteHandler>()
+  private routes: Route[] = []
 
-  private getKey(url: string, method: string): string {
-    return `${method.toUpperCase()}-${url}`
+  private createUrlPattern = (url:KnownRoute): RegExp => {
+     const pattern = url
+      .replace(/:([a-zA-Z0-9_]+)/g, '(?<$1>[^/]+)')
+      // .replace(/\//g, '\\/')
+
+    return new RegExp(`^${pattern}$`)
+  }
+
+  private getRouteHandler = (url: string, method: string): Route | null => {
+    const route = this.routes.find((route) => {
+      return route.pattern.test(url) && route.method === method
+    })
+
+    if (!route) {
+      return null
+    }
+
+    return route
   }
 
   addRoute = (url: KnownRoute, method: Method, handler: RouteHandler): void => {
-    const key = this.getKey(url, method)
-    this.routes.set(key, handler)
+    const routePattern = this.createUrlPattern(url)
+    const route = {
+      method,
+      pattern: routePattern,
+      handler,
+    } as Route
+
+    this.routes.push(route)
   }
 
   handleRequest = async (
@@ -32,17 +64,19 @@ class Router implements IRouter {
       return
     }
 
-    const key = this.getKey(url, method)
+    const route = this.getRouteHandler(url, method)
 
-    if (!this.routes.has(key)) {
+
+    if (!route) {
       res.statusCode = 400
       res.end('bad request')
       return
     }
 
-    const handler = this.routes.get(key) as RouteHandler
+    const match = route.pattern.exec(url)
+    const params = match?.groups ?? {}
 
-    return await handler(req, res)
+    return await route.handler(req, res, params)
   }
 }
 

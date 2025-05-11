@@ -1,6 +1,6 @@
 import {User} from 'models/user'
 
-export const userDataValidator = (data: Partial<User>) => {
+export const userDataValidator = (data: Partial<User>): boolean => {
   const {username, hobbies, age} = data
 
   if (!username || typeof username !== 'string') {
@@ -17,3 +17,5 @@ export const userDataValidator = (data: Partial<User>) => {
 
   return true
 }
+
+

@@ -5,6 +5,8 @@ import {InvalidInputError} from '../../utils/errors'
 import {userDataValidator} from './userDataValidator'
 import {userRepository} from '../../repository/UserRepository'
 import {IService} from 'services/service'
+import { mapUserDataToDTO } from './mapUserDataToDTO'
+import { validate } from 'uuid'
 
 class UserService implements IService<User> {
   private repository: IRepository<User>
@@ -13,20 +15,23 @@ class UserService implements IService<User> {
     this.repository = repository
   }
 
-  create = async (data: Partial<User>) => {
+  create = async (data: Partial<User>): Promise<User> => {
     const isValid = userDataValidator(data)
 
     if (!isValid) {
       throw new InvalidInputError()
     }
+
+    const dataWithValidFields = mapUserDataToDTO(data)
     const id = randomUUID()
 
     const userData = {
-      ...data,
+      ...dataWithValidFields,
       id,
     } as User
 
     await this.repository.create(userData)
+    return userData
   }
 
   getAll = async () => {
@@ -35,6 +40,13 @@ class UserService implements IService<User> {
   }
 
   getById = async (id: string) => {
+    const isIdValid = validate(id) 
+
+    console.log('isIdValid', isIdValid)
+    if (!isIdValid) {
+      throw new InvalidInputError()
+    }
+
     const user = await this.repository.read(id)
 
     if (!user) {
