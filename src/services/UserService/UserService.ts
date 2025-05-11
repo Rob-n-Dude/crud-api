@@ -34,15 +34,14 @@ class UserService implements IService<User> {
     return userData
   }
 
-  getAll = async () => {
+  getAll = async (): Promise<User[]> => {
     const users = await this.repository.findAll()
     return users
   }
 
-  getById = async (id: string) => {
+  getById = async (id: string): Promise<User | null> => {
     const isIdValid = validate(id) 
 
-    console.log('isIdValid', isIdValid)
     if (!isIdValid) {
       throw new InvalidInputError()
     }
@@ -54,6 +53,30 @@ class UserService implements IService<User> {
     }
 
     return user
+  }
+
+  update = async (id: string, data: Partial<User>): Promise<User> => {
+    const isValid = userDataValidator(data)
+
+    if (!isValid) {
+      throw new InvalidInputError()
+    }
+
+    const dbUser = await this.getById(id) // check will it throw up to controller level
+
+    if (!dbUser) {
+      throw new InvalidInputError() // should be 404 not found
+    }
+
+    const dataWithValidFields = mapUserDataToDTO(data)
+
+    const newUser = {
+      ...dataWithValidFields,
+      id,
+    } as User
+
+    await this.repository.update(id, newUser)
+    return newUser
   }
 }
 

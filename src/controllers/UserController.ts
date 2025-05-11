@@ -12,7 +12,7 @@ class UserController {
     this.service = service
   }
 
-  create = async (req: IncomingMessage, res: ServerResponse) => {
+  create = async (req: IncomingMessage, res: ServerResponse): Promise<void> => {
     try {
       const body = await getParsedBody(req) as Partial<User>
       const user = await this.service.create(body)
@@ -28,11 +28,9 @@ class UserController {
       res.statusCode = 500
       res.end('Internal server error')
     } 
-
-
   }
 
-  getAll = async (_: IncomingMessage, res: ServerResponse) => {
+  getAll = async (_: IncomingMessage, res: ServerResponse): Promise<void>  => {
     const all = await this.service.getAll()
 
     res.statusCode = 200
@@ -43,7 +41,7 @@ class UserController {
     _: IncomingMessage, 
     res: ServerResponse, 
     params = {} as Record<string, unknown>
-  ) => {
+  ): Promise<void>  => {
     if (!params.id) {
       res.statusCode = 400
       res.end('bad request')
@@ -73,6 +71,35 @@ class UserController {
     }
 
   }
+
+  updateById = async(
+    req: IncomingMessage, 
+    res: ServerResponse, 
+    params = {} as Record<string, unknown>
+  ): Promise<void> => {
+    if (!params.id) {
+      res.statusCode = 400
+      res.end('bad request')
+      return
+    }
+    
+    try {
+      const body = await getParsedBody(req) as Partial<User>
+      const updatedUser = await this.service.update(params.id as string, body)
+
+      res.statusCode = 200
+      res.end(JSON.stringify(updatedUser))
+    } catch (e) {
+      if (e instanceof InvalidInputError) {
+        res.statusCode = 400
+        res.end('bad request')
+        return
+      }
+
+      res.statusCode = 500
+      res.end('Internal server error')
+    }
+  } 
 }
 
 export const userController = new UserController(userService)
