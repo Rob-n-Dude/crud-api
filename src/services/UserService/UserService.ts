@@ -6,7 +6,7 @@ import {userDataValidator} from './userDataValidator'
 import {userRepository} from '../../repository/UserRepository'
 import {IService} from 'services/service'
 import { mapUserDataToDTO } from './mapUserDataToDTO'
-import { validate } from 'uuid'
+import { validate as isUUID } from 'uuid'
 
 class UserService implements IService<User> {
   private repository: IRepository<User>
@@ -40,7 +40,7 @@ class UserService implements IService<User> {
   }
 
   getById = async (id: string): Promise<User | null> => {
-    const isIdValid = validate(id) 
+    const isIdValid = isUUID(id) 
 
     if (!isIdValid) {
       throw new InvalidInputError()
@@ -77,6 +77,18 @@ class UserService implements IService<User> {
 
     await this.repository.update(id, newUser)
     return newUser
+  }
+
+  delete = async (id: string): Promise<boolean> => {
+    const isValidId = isUUID(id)
+
+    if (!isValidId) {
+      throw new InvalidInputError()
+    }
+
+    const isDeleted = await this.repository.delete(id)
+      
+    return isDeleted
   }
 }
 

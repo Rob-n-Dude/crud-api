@@ -7,6 +7,7 @@ export const withUserRouter = (router: IRouter): IRouter => {
   router.addRoute(UserRoutes.USERS, Method.POST, userController.create)
   router.addRoute(UserRoutes.USER, Method.GET, userController.getById)
   router.addRoute(UserRoutes.USER, Method.PUT, userController.updateById)
+  router.addRoute(UserRoutes.USER, Method.DELETE, userController.deleteById)
 
   return router
 }

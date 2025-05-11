@@ -100,6 +100,33 @@ class UserController {
       res.end('Internal server error')
     }
   } 
+
+  deleteById = async (
+    _: IncomingMessage, 
+    res: ServerResponse, 
+    params = {} as Record<string, unknown>
+  ): Promise<void> => {
+    if (!params.id) {
+      res.statusCode = 400
+      res.end('bad request')
+      return
+    }
+
+    try {
+      await this.service.delete(params.id as string)
+      res.statusCode = 200
+      res.end('deleted')
+    }   catch (e) {
+      if (e instanceof InvalidInputError) {
+        res.statusCode = 400
+        res.end('bad request')
+        return
+      }
+
+      res.statusCode = 500
+      res.end('Internal server error')
+    }
+  }
 }
 
 export const userController = new UserController(userService)
