@@ -17,5 +17,3 @@ export const userDataValidator = (data: Partial<User>): boolean => {
 
   return true
 }
-
-

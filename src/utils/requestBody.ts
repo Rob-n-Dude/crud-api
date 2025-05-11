@@ -1,4 +1,4 @@
-import { IncomingMessage } from "http";
+import {IncomingMessage} from 'http'
 
 export type ParsedBody = Record<string, unknown> | unknown[] | string
 
@@ -21,7 +21,7 @@ const getBodyFromRequest = (request: IncomingMessage): Promise<string> => {
 }
 
 const tryParseBodyBuffer = (input: string): ParsedBody => {
-  let parsedInput;
+  let parsedInput
 
   try {
     parsedInput = JSON.parse(input)
@@ -32,7 +32,9 @@ const tryParseBodyBuffer = (input: string): ParsedBody => {
   }
 }
 
-export const getParsedBody = async (request: IncomingMessage): Promise<ParsedBody> => {
+export const getParsedBody = async (
+  request: IncomingMessage
+): Promise<ParsedBody> => {
   const body = await getBodyFromRequest(request)
   return tryParseBodyBuffer(body)
 }

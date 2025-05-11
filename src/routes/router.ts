@@ -1,16 +1,18 @@
+import {STATUS_CODE_TO_RESPONSE} from '../utils/response'
 import {KnownRoute, Method} from '../constants/router'
 import {IncomingMessage, ServerResponse} from 'node:http'
+import {StatusCode} from '../constants/statusCode'
 
 type RouteHandler = (
-  req: IncomingMessage, 
-  res: ServerResponse,  
-  params?: Record<string, unknown>,
+  req: IncomingMessage,
+  res: ServerResponse,
+  params?: Record<string, unknown>
 ) => Promise<void>
 
 interface Route {
-  method: Method,
-  pattern: RegExp,
-  handler: RouteHandler,
+  method: Method
+  pattern: RegExp
+  handler: RouteHandler
 }
 
 export interface IRouter {
@@ -21,10 +23,8 @@ export interface IRouter {
 class Router implements IRouter {
   private routes: Route[] = []
 
-  private createUrlPattern = (url:KnownRoute): RegExp => {
-     const pattern = url
-      .replace(/:([a-zA-Z0-9_]+)/g, '(?<$1>[^/]+)')
-      // .replace(/\//g, '\\/')
+  private createUrlPattern = (url: KnownRoute): RegExp => {
+    const pattern = url.replace(/:([a-zA-Z0-9_]+)/g, '(?<$1>[^/]+)')
 
     return new RegExp(`^${pattern}$`)
   }
@@ -59,17 +59,14 @@ class Router implements IRouter {
     const {method, url} = req
 
     if (!method || !url) {
-      res.statusCode = 400
-      res.end('bad request')
+      STATUS_CODE_TO_RESPONSE[StatusCode.BAD_REQUEST](res)
       return
     }
 
     const route = this.getRouteHandler(url, method)
 
-
     if (!route) {
-      res.statusCode = 400
-      res.end('bad request')
+      STATUS_CODE_TO_RESPONSE[StatusCode.BAD_REQUEST](res)
       return
     }
 
