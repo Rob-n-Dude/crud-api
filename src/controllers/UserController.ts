@@ -1,13 +1,13 @@
 import {IncomingMessage, ServerResponse} from 'http'
 import {User} from 'models/user'
 import {IService} from '../services/service'
-import {userService} from '../services/UserService'
 import {getParsedBody} from '../utils/requestBody'
 import {STATUS_CODE_TO_RESPONSE} from '../utils/response'
 import {StatusCode} from '../constants/statusCode'
 import {UserMessage} from '../constants/userMessage'
+import {IController} from './controller'
 
-class UserController {
+export class UserController implements IController {
   private service: IService<User>
 
   constructor(service: IService<User>) {
@@ -15,10 +15,10 @@ class UserController {
   }
 
   create = async (req: IncomingMessage, res: ServerResponse): Promise<void> => {
-      const body = (await getParsedBody(req)) as Partial<User>
-      const user = await this.service.create(body)
+    const body = (await getParsedBody(req)) as Partial<User>
+    const user = await this.service.create(body)
 
-      STATUS_CODE_TO_RESPONSE[StatusCode.CREATED](res, JSON.stringify(user))
+    STATUS_CODE_TO_RESPONSE[StatusCode.CREATED](res, JSON.stringify(user))
   }
 
   getAll = async (_: IncomingMessage, res: ServerResponse): Promise<void> => {
@@ -78,5 +78,3 @@ class UserController {
     STATUS_CODE_TO_RESPONSE[StatusCode.OK](res, UserMessage.OK)
   }
 }
-
-export const userController = new UserController(userService)

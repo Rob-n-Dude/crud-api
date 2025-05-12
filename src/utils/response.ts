@@ -1,7 +1,7 @@
 import {StatusCode} from '../constants/statusCode'
 import {UserMessage} from '../constants/userMessage'
 import {ServerResponse} from 'http'
-import { InvalidInputError, NotFoundError } from './errors'
+import {InvalidInputError, NotFoundError} from './errors'
 
 const setupResponse = (
   response: ServerResponse,
@@ -39,10 +39,10 @@ export const STATUS_CODE_TO_RESPONSE: CodeToResponse = {
 }
 
 export const errorToResponse = (e: unknown, res: ServerResponse) => {
- if (e instanceof InvalidInputError) {
+  if (e instanceof InvalidInputError) {
     STATUS_CODE_TO_RESPONSE[StatusCode.BAD_REQUEST](res)
     return
-  } 
+  }
 
   if (e instanceof NotFoundError) {
     STATUS_CODE_TO_RESPONSE[StatusCode.NOT_FOUND](res)

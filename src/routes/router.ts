@@ -20,7 +20,7 @@ export interface IRouter {
   handleRequest: RouteHandler
 }
 
-class Router implements IRouter {
+export class Router implements IRouter {
   private routes: Route[] = []
 
   private createUrlPattern = (url: KnownRoute): RegExp => {
@@ -80,5 +80,3 @@ class Router implements IRouter {
     }
   }
 }
-
-export const appRouter = new Router()

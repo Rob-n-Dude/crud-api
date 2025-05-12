@@ -1,7 +1,7 @@
 import {User} from 'models/user'
 import {IRepository} from './repository'
 
-class UserRepository implements IRepository<User> {
+export class UserRepository implements IRepository<User> {
   private storage = new Map<string, User>()
 
   create = async (item: User) => {
@@ -30,5 +30,3 @@ class UserRepository implements IRepository<User> {
     return item
   }
 }
-
-export const userRepository = new UserRepository()

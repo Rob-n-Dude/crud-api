@@ -3,12 +3,11 @@ import {randomUUID} from 'node:crypto'
 import {IRepository} from '../../repository/repository'
 import {InvalidInputError, NotFoundError} from '../../utils/errors'
 import {userDataValidator} from './userDataValidator'
-import {userRepository} from '../../repository/UserRepository'
 import {IService} from 'services/service'
 import {mapUserDataToDTO} from './mapUserDataToDTO'
 import {validate as isUUID} from 'uuid'
 
-class UserService implements IService<User> {
+export class UserService implements IService<User> {
   private repository: IRepository<User>
 
   constructor(repository: IRepository<User>) {
@@ -97,5 +96,3 @@ class UserService implements IService<User> {
     return isDeleted
   }
 }
-
-export const userService = new UserService(userRepository)

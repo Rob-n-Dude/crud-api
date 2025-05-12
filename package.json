@@ -1,13 +1,14 @@
 {
   "name": "crud-api",
   "version": "1.0.0",
-  "main": "entry.ts",
   "repository": "https://github.com/Rob-n-Dude/crud-api.git",
   "author": "Rob-n-Dude",
   "license": "MIT",
   "scripts": {
-    "start:dev": "npx nodemon",
-    "start:prod": "webpack && node dist/bundle.js",
+    "start:dev": "npx nodemon --config ./nodemon.single.json",
+    "start:multi": "npx nodemon --config ./nodemon.cluster.json",
+    "start:prod": "webpack && node dist/single.bundle.js",
+    "start:prod:multi": "webpack && node dist/multi.bundle.js",
     "format": "prettier --write .",
     "lint": "eslint . --fix"
   },

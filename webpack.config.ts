@@ -2,7 +2,10 @@ import path from 'path'
 
 module.exports = {
   mode: 'production',
-  entry: './src/entry.ts',
+  entry: {
+    single: './src/application/single/server.ts',
+    multi: './src/application/multi/cluster.ts',
+  },
   target: 'node',
   module: {
     rules: [
@@ -17,7 +20,7 @@ module.exports = {
     extensions: ['.ts', '.js'],
   },
   output: {
-    filename: 'bundle.js',
+    filename: '[name].bundle.js',
     path: path.resolve(__dirname, 'dist'),
   },
 }
