@@ -1,6 +1,6 @@
 import {UserRepository} from '../../repository/UserRepository'
 import {ENV} from '../../utils/env'
-import {startServer} from '../multi/startServer'
+import {startServer} from '../startServer'
 import {UserService} from '../../services/UserService'
 import {UserController} from '../../controllers/UserController'
 import {Router} from '../../routes/router'

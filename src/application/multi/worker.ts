@@ -1,4 +1,4 @@
-import {startServer} from './startServer'
+import {startServer} from '../startServer'
 import {UserService} from '../../services/UserService'
 import {UserController} from '../../controllers/UserController'
 import {Router} from '../../routes/router'
