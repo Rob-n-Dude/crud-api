@@ -1,4 +1,4 @@
-import {STATUS_CODE_TO_RESPONSE} from '../utils/response'
+import {errorToResponse, STATUS_CODE_TO_RESPONSE} from '../utils/response'
 import {KnownRoute, Method} from '../constants/router'
 import {IncomingMessage, ServerResponse} from 'node:http'
 import {StatusCode} from '../constants/statusCode'
@@ -66,14 +66,18 @@ class Router implements IRouter {
     const route = this.getRouteHandler(url, method)
 
     if (!route) {
-      STATUS_CODE_TO_RESPONSE[StatusCode.BAD_REQUEST](res)
+      STATUS_CODE_TO_RESPONSE[StatusCode.NOT_FOUND](res)
       return
     }
 
     const match = route.pattern.exec(url)
     const params = match?.groups ?? {}
 
-    return await route.handler(req, res, params)
+    try {
+      await route.handler(req, res, params)
+    } catch (e: unknown) {
+      errorToResponse(e, res)
+    }
   }
 }
 
