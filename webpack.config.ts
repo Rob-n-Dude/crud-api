@@ -3,6 +3,7 @@ import path from 'path'
 module.exports = {
   mode: 'production',
   entry: './src/entry.ts',
+  target: 'node',
   module: {
     rules: [
       {
@@ -16,7 +17,7 @@ module.exports = {
     extensions: ['.ts', '.js'],
   },
   output: {
-    filename: '[contenthash].bundle.js',
+    filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),
   },
 }
